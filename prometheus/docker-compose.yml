@@ -1,0 +1,44 @@
+services:
+  go-app:
+    build: ./app
+    container_name: go-app
+    hostname: go-app
+    ports:
+      - 1234:1234
+    networks:
+      - monitoring
+
+  # TODO: наладить запуск prometheus, падает при запуске контейнера с паникой
+  # prometheus  | time=2025-11-06T14:48:27.711Z level=ERROR source=query_logger.go:113 msg="Error opening query log file" component=activeQueryTracker file=/prometheus/data/queries.active err="open data/queries.active: no such file or directory"
+  # prometheus  | panic: Unable to create mmap-ed active query log
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    depends_on:
+      - go-app
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
+
+
+networks:
+  monitoring:
+    driver: bridge
