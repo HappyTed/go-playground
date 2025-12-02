@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// запуск сервера через nc: `nc -ul localhost:1234 -vv`
+// запуск сервера через nc: `nc -ul localhost 1234 -vv`
 func main() {
 	arguments := os.Args
 	if len(arguments) == 1 {
@@ -41,7 +41,7 @@ func main() {
 
 		_, err := c.Write(data)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Fatal write data: ", err)
 		}
 
 		if strings.TrimSpace(string(data)) == "STOP" {
@@ -52,7 +52,7 @@ func main() {
 		buffer := make([]byte, 1024)
 		n, _, err := c.ReadFromUDP(buffer)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("fatal read from udp: ", err)
 		}
 		fmt.Printf("Reply: %s\n", string(buffer[0:n]))
 	}
