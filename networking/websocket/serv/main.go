@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -43,6 +44,11 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
+		if strings.TrimSpace(string(message)) == "STOP" {
+			log.Println("Stop ws server")
+			os.Exit(0)
+		}
+
 		log.Print("Received:", string(message))
 
 		err = ws.WriteMessage(mt, message) // отправляем только так
@@ -53,6 +59,12 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+для тестирования:
+
+	sudo pacman -S websocat
+	websocat ws://localhost:1234/ws
+*/
 func main() {
 	arguments := os.Args
 	if len(arguments) != 1 {

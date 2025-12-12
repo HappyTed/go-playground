@@ -1,4 +1,4 @@
-module ws-serv
+module ws-client
 
 go 1.25.3
 
