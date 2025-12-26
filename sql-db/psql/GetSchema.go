@@ -65,6 +65,9 @@ func main() {
 	rows, err = db.Query(query)
 	if err != nil {
 		fmt.Println("Query", err)
+		return
 	}
+
+	
 
 }
